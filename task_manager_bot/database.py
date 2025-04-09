@@ -1,5 +1,3 @@
-# database.py
-
 import sqlite3
 
 class TaskDatabase:
@@ -9,8 +7,7 @@ class TaskDatabase:
             self.conn = sqlite3.connect(self.db_path)
             self._create_tasks_table()
         except Exception as e:
-            raise Exception("Veritabanı bağlantısı hatalı.")  # Buraya bu satırı ekle
-
+            raise Exception("Veritabanı bağlantısı hatalı.")
 
     def _create_tasks_table(self):
         with self.conn:
@@ -27,8 +24,7 @@ class TaskDatabase:
             return None
         with self.conn:
             cursor = self.conn.execute("INSERT INTO tasks (description) VALUES (?)", (description,))
-            return cursor.lastrowid  # Eklenen görevin ID’sini döndür
-
+            return cursor.lastrowid
 
     def delete_task(self, task_id):
         if not isinstance(task_id, int):
@@ -36,17 +32,20 @@ class TaskDatabase:
         with self.conn:
             self.conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
 
-
-    def get_all_tasks(self):
-        cursor = self.conn.execute("SELECT id, description, completed FROM tasks")
-        return cursor.fetchall()
-
     def complete_task(self, task_id):
         with self.conn:
             self.conn.execute(
                 "UPDATE tasks SET completed = 1 WHERE id = ?",
                 (task_id,)
             )
+
+    def get_tasks(self):
+        cursor = self.conn.execute("SELECT id, description, completed FROM tasks")
+        return cursor.fetchall()
+
+    def get_task_by_id(self, task_id):
+        cursor = self.conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
+        return cursor.fetchone()
 
     def close(self):
         self.conn.close()

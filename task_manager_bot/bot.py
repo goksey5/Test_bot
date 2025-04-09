@@ -3,7 +3,7 @@ import sys
 import discord
 from discord.ext import commands
 from database import TaskDatabase
-from task_manager_bot.config import token
+from config import token
 sys.path.append(r'C:\Users\gokse\OneDrive\Masaüstü\task_manager_bot')
 
 
@@ -42,8 +42,15 @@ async def show_tasks(ctx):
 
 @bot.command(name='complete_task')
 async def complete_task(ctx, task_id: int):
+    tasks = db.get_tasks()
+    task_ids = [task[0] for task in tasks]  # ID'leri al
+
+    if task_id not in task_ids:
+        await ctx.send(f'❌ Bu ID ile bir görev bulunamadı: {task_id}')
+        return
+
     db.complete_task(task_id)
     await ctx.send(f'🎉 Görev tamamlandı olarak işaretlendi. ID: {task_id}')
 
-# Botu başlatmak için aşağıdaki satırı kendi bot token'ınla birlikte aç:
+
 bot.run(token)
