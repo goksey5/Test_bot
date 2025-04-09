@@ -1,6 +1,7 @@
 import os
 import pytest
-from database import TaskDatabase
+from task_manager_bot.database import TaskDatabase
+
 
 # Her testten önce veritabanı dosyasını sil
 @pytest.fixture(autouse=True)
