@@ -46,6 +46,11 @@ class TaskDatabase:
     def get_task_by_id(self, task_id):
         cursor = self.conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
         return cursor.fetchone()
+    
+    def get_completed_tasks(self):
+        cursor = self.conn.execute("SELECT id, description FROM tasks WHERE completed = 1")
+        return cursor.fetchall()
+
 
     def close(self):
         self.conn.close()

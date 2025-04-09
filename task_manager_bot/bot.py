@@ -51,6 +51,19 @@ async def complete_task(ctx, task_id: int):
 
     db.complete_task(task_id)
     await ctx.send(f'🎉 Görev tamamlandı olarak işaretlendi. ID: {task_id}')
+    
+@bot.command(name='completed_tasks')
+async def completed_tasks(ctx):
+    tasks = db.get_completed_tasks()
+    if not tasks:
+        await ctx.send("✅ Tamamlanmış görev bulunmuyor.")
+        return
+
+    response = "📋 **Tamamlanmış Görevler:**\n"
+    for task_id, desc in tasks:
+        response += f"- ID: {task_id}, Açıklama: {desc}\n"
+
+    await ctx.send(response)
 
 
 bot.run(token)
