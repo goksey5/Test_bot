@@ -1,10 +1,10 @@
 # bot.py
-
+import sys
 import discord
 from discord.ext import commands
 from database import TaskDatabase
 from task_manager_bot.config import token
-
+sys.path.append('C:\\Users\\gokse\\OneDrive\\Masaüstü\\task_manager_bot\\task_manager_bot')
 intents = discord.Intents.default()
 intents.message_content = True  # Mesaj içeriğine erişim izni
 bot = commands.Bot(command_prefix='!', intents=intents)
