@@ -1,59 +1,39 @@
 import sqlite3
 
 class TaskDatabase:
-    def __init__(self, db_path="tasks.db"):
+    def __init__(self, db_path='task_manager_bot/tests/test_tasks.db'):
+        """Veritabanı bağlantısını kurar."""
         self.db_path = db_path
-        try:
-            self.conn = sqlite3.connect(self.db_path)
-            self._create_tasks_table()
-        except Exception as e:
-            raise Exception("Veritabanı bağlantısı hatalı.")
+        self.connection = sqlite3.connect(self.db_path)
+        self.cursor = self.connection.cursor()
 
-    def _create_tasks_table(self):
-        with self.conn:
-            self.conn.execute("""
-                CREATE TABLE IF NOT EXISTS tasks (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    description TEXT NOT NULL,
-                    completed BOOLEAN NOT NULL DEFAULT 0
-                )
-            """)
+        # Tabloyu oluşturuyoruz, eğer yoksa
+        self.cursor.execute('''CREATE TABLE IF NOT EXISTS tasks (
+                                id INTEGER PRIMARY KEY,
+                                description TEXT,
+                                completed BOOLEAN)''')
+        self.connection.commit()
 
     def add_task(self, description):
-        if not description:
-            return None
-        with self.conn:
-            cursor = self.conn.execute("INSERT INTO tasks (description) VALUES (?)", (description,))
-            return cursor.lastrowid
-
-    def delete_task(self, task_id):
-        if not isinstance(task_id, int):
-            raise ValueError("Görev ID'si geçerli bir tamsayı olmalıdır.")
-        with self.conn:
-            self.conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+        """Yeni bir görev ekler."""
+        self.cursor.execute("INSERT INTO tasks (description, completed) VALUES (?, ?)", (description, False))
+        self.connection.commit()
 
     def complete_task(self, task_id):
-        with self.conn:
-            self.conn.execute(
-                "UPDATE tasks SET completed = 1 WHERE id = ?",
-                (task_id,)
-            )
-
-    def get_all_tasks(self):
-        cursor = self.conn.execute("SELECT id, description, completed FROM tasks")
-        return cursor.fetchall()
-
-    def get_task_by_id(self, task_id):
-        cursor = self.conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
-        return cursor.fetchone()
+        """Bir görevi tamamlanmış olarak işaretler."""
+        self.cursor.execute("UPDATE tasks SET completed = ? WHERE id = ?", (True, task_id))
+        self.connection.commit()
 
     def get_completed_tasks(self):
-        cursor = self.conn.execute("SELECT id, description FROM tasks WHERE completed = 1")
-        return cursor.fetchall()
+        """Tamamlanmış görevleri alır."""
+        self.cursor.execute("SELECT * FROM tasks WHERE completed = ?", (True,))
+        return self.cursor.fetchall()
 
     def delete_all_tasks(self):
-        with self.conn:
-            self.conn.execute("DELETE FROM tasks")
+        """Tüm görevleri siler."""
+        self.cursor.execute("DELETE FROM tasks")
+        self.connection.commit()
 
     def close(self):
-        self.conn.close()
+        """Veritabanı bağlantısını kapatır."""
+        self.connection.close()
