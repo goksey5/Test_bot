@@ -39,18 +39,21 @@ class TaskDatabase:
                 (task_id,)
             )
 
-    def get_tasks(self):
+    def get_all_tasks(self):
         cursor = self.conn.execute("SELECT id, description, completed FROM tasks")
         return cursor.fetchall()
 
     def get_task_by_id(self, task_id):
         cursor = self.conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
         return cursor.fetchone()
-    
+
     def get_completed_tasks(self):
         cursor = self.conn.execute("SELECT id, description FROM tasks WHERE completed = 1")
         return cursor.fetchall()
 
+    def delete_all_tasks(self):
+        with self.conn:
+            self.conn.execute("DELETE FROM tasks")
 
     def close(self):
         self.conn.close()

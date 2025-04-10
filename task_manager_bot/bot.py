@@ -42,7 +42,7 @@ async def show_tasks(ctx):
 
 @bot.command(name='complete_task')
 async def complete_task(ctx, task_id: int):
-    tasks = db.get_tasks()
+    tasks = db.get_all_tasks()
     task_ids = [task[0] for task in tasks]  # ID'leri al
 
     if task_id not in task_ids:
