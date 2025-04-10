@@ -18,7 +18,6 @@ def setup_db():
     task_db.delete_all_tasks()  # Testten sonra veritabanını temizler
     task_db.close()  # Veritabanı bağlantısını kapat
 
-# Tamamlanmış görevleri doğru şekilde alındığını test et
 def test_get_completed_tasks(setup_db):
     """Tamamlanmış görevlerin doğru şekilde alındığını test edelim"""
     
@@ -45,9 +44,10 @@ def test_get_completed_tasks(setup_db):
     # Test Sonucu: Görev açıklamaları doğru şekilde eşleşiyor
     expected_description = "Test task 1"
     assert completed_tasks[0][1] == expected_description, f"Beklenen açıklama: {expected_description}, Bulunan: {completed_tasks[0][1]}"
+    
     print("Test tamamlandı: Tamamlanmış görevler doğru şekilde alındı.")
 
-# Bir görev tamamlandığında veritabanının doğru şekilde güncellenip güncellenmediğini test et
+
 def test_complete_task(setup_db):
     """Bir görev tamamlandığında veritabanının doğru şekilde güncellenip güncellenmediğini test edelim"""
 
@@ -71,24 +71,33 @@ def test_complete_task(setup_db):
     # Test Sonucu: Görev açıklamaları doğru şekilde eşleşmeli
     expected_description = "Test task to complete"
     assert completed_tasks[0][1] == expected_description, f"Beklenen açıklama: {expected_description}, Bulunan: {completed_tasks[0][1]}"
+    
     print("Test tamamlandı: Görev tamamlandı olarak işaretlendi ve veritabanı güncellendi.")
 
-# Veritabanına görev eklenip eklenmediğini test et
+
 def test_get_all_tasks(setup_db):
-    """Veritabanına görev eklenip eklenmediğini kontrol eder."""
-    task_db = setup_db
+    """Tüm görevleri doğru şekilde alıp almadığını test edelim"""
+    
+    task_db = setup_db  # Test setup'ı kullanıyoruz
 
-    # Başlangıçta görev olmamalı
-    tasks = task_db.get_all_tasks()
-    assert len(tasks) == 0, "Başlangıçta görev bulunmamalı."
+    # Başlangıçta tüm görevler boş olmalı
+    all_tasks = task_db.get_all_tasks()
+    assert len(all_tasks) == 0, "Başlangıçta görev bulunmamalı."
+    print("Test başladı: Başlangıçta görev bulunmuyor.")
 
-    # Görev ekleyelim
+    # Test: Bir görev ekleyelim
     task_db.add_task("Test task 1")
     task_db.add_task("Test task 2")
 
-    # Görevlerin doğru şekilde alındığını kontrol edelim
-    tasks = task_db.get_all_tasks()
-    assert len(tasks) == 2, "2 görev bekleniyordu."
-    assert tasks[0][1] == "Test task 1", "İlk görev açıklaması hatalı."
-    assert tasks[1][1] == "Test task 2", "İkinci görev açıklaması hatalı."
+    # Tüm görevleri alalım
+    all_tasks = task_db.get_all_tasks()
+
+    # Test Sonucu: Toplam görev sayısı doğru olmalı
+    assert len(all_tasks) == 2, "Görev sayısı yanlış."
+
+    # Test Sonucu: Görev açıklamaları doğru şekilde eşleşmeli
+    expected_descriptions = ["Test task 1", "Test task 2"]
+    actual_descriptions = [task[1] for task in all_tasks]
+    assert actual_descriptions == expected_descriptions, f"Beklenen açıklamalar: {expected_descriptions}, Bulunan: {actual_descriptions}"
+
     print("Test tamamlandı: Görevler doğru şekilde alındı ve açıklamaları eşleşti.")
