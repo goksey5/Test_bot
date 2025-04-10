@@ -14,6 +14,7 @@ def setup_db():
 
     task_db = TaskDatabase(db_path=test_db_path)  # Veritabanı sınıfını başlatıyoruz
     task_db.delete_all_tasks()  # Veritabanını temizler
+    print("Tüm görevler başarıyla silindi.")
     yield task_db  # Test için db nesnesini sağlar
     task_db.delete_all_tasks()  # Testten sonra veritabanını temizler
     task_db.close()  # Veritabanı bağlantısını kapat

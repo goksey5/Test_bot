@@ -50,10 +50,10 @@ class TaskDatabase:
         try:
             self.cursor.execute("DELETE FROM tasks")
             self.connection.commit()
-            print("Tüm görevler başarıyla silindi.")  # Loglama amaçlı bir çıktı
+          
         except sqlite3.Error as e:
             print(f"Veritabanı hatası: {e}")
-            
+
     def close(self):
         """Veritabanı bağlantısını kapatır."""
         if self.connection:
