@@ -8,6 +8,7 @@ from task_manager_bot.database import TaskDatabase  # Veritabanı sınıfını i
 def setup_db():
     """Her testten önce veritabanı bağlantısını kurar ve temizler."""
     test_db_path = os.path.join(os.path.dirname(__file__), 'test_tasks.db')  # Test veritabanı dosyasının yolu
+    
     if os.path.exists(test_db_path):  # Test başlamadan önce mevcut test veritabanı dosyasını sil
         os.remove(test_db_path)
 
@@ -44,7 +45,8 @@ def test_get_completed_tasks(setup_db):
     # Test Sonucu: Görev açıklamaları doğru şekilde eşleşiyor
     expected_description = "Test task 1"
     assert completed_tasks[0][1] == expected_description, f"Beklenen açıklama: {expected_description}, Bulunan: {completed_tasks[0][1]}"
-    
+    print("Test tamamlandı: Tamamlanmış görevler doğru şekilde alındı.")
+
 # Bir görev tamamlandığında veritabanının doğru şekilde güncellenip güncellenmediğini test et
 def test_complete_task(setup_db):
     """Bir görev tamamlandığında veritabanının doğru şekilde güncellenip güncellenmediğini test edelim"""
@@ -69,3 +71,24 @@ def test_complete_task(setup_db):
     # Test Sonucu: Görev açıklamaları doğru şekilde eşleşmeli
     expected_description = "Test task to complete"
     assert completed_tasks[0][1] == expected_description, f"Beklenen açıklama: {expected_description}, Bulunan: {completed_tasks[0][1]}"
+    print("Test tamamlandı: Görev tamamlandı olarak işaretlendi ve veritabanı güncellendi.")
+
+# Veritabanına görev eklenip eklenmediğini test et
+def test_get_all_tasks(setup_db):
+    """Veritabanına görev eklenip eklenmediğini kontrol eder."""
+    task_db = setup_db
+
+    # Başlangıçta görev olmamalı
+    tasks = task_db.get_all_tasks()
+    assert len(tasks) == 0, "Başlangıçta görev bulunmamalı."
+
+    # Görev ekleyelim
+    task_db.add_task("Test task 1")
+    task_db.add_task("Test task 2")
+
+    # Görevlerin doğru şekilde alındığını kontrol edelim
+    tasks = task_db.get_all_tasks()
+    assert len(tasks) == 2, "2 görev bekleniyordu."
+    assert tasks[0][1] == "Test task 1", "İlk görev açıklaması hatalı."
+    assert tasks[1][1] == "Test task 2", "İkinci görev açıklaması hatalı."
+    print("Test tamamlandı: Görevler doğru şekilde alındı ve açıklamaları eşleşti.")

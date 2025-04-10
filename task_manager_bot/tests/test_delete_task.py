@@ -1,9 +1,9 @@
-import sys
+
 import os
 import pytest
 from task_manager_bot.database import TaskDatabase
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 
 TEST_DB = "test_tasks.db"
 

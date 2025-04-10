@@ -15,9 +15,12 @@ class TaskDatabase:
         self.connection.commit()
 
     def add_task(self, description):
-        """Yeni bir görev ekler."""
+        """Yeni bir görev ekler ve görev ID'sini döndürür."""
         self.cursor.execute("INSERT INTO tasks (description, completed) VALUES (?, ?)", (description, False))
         self.connection.commit()
+        # Eklenen görev için ID'yi al
+        task_id = self.cursor.lastrowid
+        return task_id  # Döndürülen ID
 
     def complete_task(self, task_id):
         """Bir görevi tamamlanmış olarak işaretler."""
@@ -26,14 +29,32 @@ class TaskDatabase:
 
     def get_completed_tasks(self):
         """Tamamlanmış görevleri alır."""
-        self.cursor.execute("SELECT * FROM tasks WHERE completed = ?", (True,))
+        self.cursor.execute("SELECT id, description FROM tasks WHERE completed = ?", (True,))
         return self.cursor.fetchall()
 
+    def get_all_tasks(self):
+        """Tüm görevleri alır."""
+        self.cursor.execute("SELECT * FROM tasks")
+        return self.cursor.fetchall()
+
+    def delete_task(self, task_id):
+        """Bir görevi siler."""
+        try:
+            self.cursor.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+            self.connection.commit()
+            print(f"Görev {task_id} başarıyla silindi.")  # Loglama amaçlı bir çıktı
+        except sqlite3.Error as e:
+            print(f"Veritabanı hatası: {e}")
     def delete_all_tasks(self):
         """Tüm görevleri siler."""
-        self.cursor.execute("DELETE FROM tasks")
-        self.connection.commit()
-
+        try:
+            self.cursor.execute("DELETE FROM tasks")
+            self.connection.commit()
+            print("Tüm görevler başarıyla silindi.")  # Loglama amaçlı bir çıktı
+        except sqlite3.Error as e:
+            print(f"Veritabanı hatası: {e}")
+            
     def close(self):
         """Veritabanı bağlantısını kapatır."""
-        self.connection.close()
+        if self.connection:
+            self.connection.close()
