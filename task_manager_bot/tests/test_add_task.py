@@ -39,11 +39,21 @@ def test_add_task(db):
 def test_add_task_invalid_data(db):
     print("Testing add_task() with invalid data.")
 
-    task_id = db.add_task("")
+    # Boş bir görev eklemeye çalışıyoruz
+    try:
+        task_id = db.add_task("")
+        # Eğer boş görev eklenirse hata fırlatılmalı
+        assert False, "Boş görev eklenmemeli."
+    except ValueError as e:
+        # Eğer boş görev eklenirse burada hata bekliyoruz
+        assert str(e) == "Görev açıklaması boş olamaz.", f"Hata mesajı bekleniyordu: {str(e)}"
+
     tasks_after = db.get_all_tasks()
-    assert all(task[1] != "" for task in tasks_after), "Boş görev eklenmemeli."
+    # Veritabanında yeni bir görev eklenmemiş olmalı
+    assert len(tasks_after) == 0, "Boş görev eklenmemeli, liste boş kalmalı."
 
     print("✅ Test passed: add_task_invalid_data().")
+
 
 
 # Test 3: Boş veritabanı durumu
