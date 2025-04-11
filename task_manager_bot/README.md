@@ -112,7 +112,7 @@ pip install -r requirements.txt
 
 ## ✍️ Geliştirici
 
-📌 **Adınız:** Gökser  
+📌 **Adınız:** Gökhan 
 💡 **Amaç:** Python becerilerini geliştirmek ve öğrencilere örnek proje sunmak.  
 
 ---
